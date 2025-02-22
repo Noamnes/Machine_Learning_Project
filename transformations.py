@@ -1,8 +1,6 @@
 import numpy as np
-from scipy.ndimage import affine_transform
-
+from scipy.ndimage import affine_transform, center_of_mass
 import matplotlib.pyplot as plt
-from scipy.ndimage import center_of_mass
 from scipy.stats import moment
 
 def deskew_image(img: np.ndarray) -> np.ndarray:
@@ -58,3 +56,25 @@ def compute_tilt_angle(image):
     # Compute orientation angle (in degrees)
     theta = 0.5 * np.arctan2(2 * mu11, mu20 - mu02) * (180 / np.pi)
     return abs(theta)  # Absolute value of tilt angle
+
+def center_image(img: np.ndarray) -> np.ndarray:
+    """
+    Centers a 28x28 grayscale digit image.
+    
+    Args:
+        img (np.ndarray): A 28x28 grayscale image array.
+        
+    Returns:
+        np.ndarray: A centered 28x28 image array.
+    """
+    # Compute the center of mass
+    cy, cx = center_of_mass(img)
+    
+    # Compute the translation needed to center the image
+    translate_y = 14 - cy
+    translate_x = 14 - cx
+    translation_matrix = np.array([[1, 0, translate_x], [0, 1, translate_y]])
+    
+    # Apply the translation
+    centered_img = affine_transform(img, translation_matrix, offset=0, order=1, mode='constant', cval=0)
+    return centered_img
