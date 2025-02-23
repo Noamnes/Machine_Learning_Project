@@ -17,4 +17,4 @@
 3. **L2 (Euclidean Distance)**
 4. **L1 (Manhattan Distance)**
 5. **Tangent Distance**
-6. **Cosine Distance**
+6. **Cosine Distance** - nice, with KNN (test ac 97.33)
