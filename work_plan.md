@@ -4,7 +4,7 @@
 1. **Centering (Mean Removal)**
 2. **Principal Component Analysis (PCA)**
 3. **Deskew (Tilt Correction)** - Fix existing code
-4. **Fourier Transform Features?**
+4. **Fourier Transform Features** - worst with KNN (test ac = 93.28)
 
 ## Training-Only Transformations:
 1. **Elastic Deformations?**

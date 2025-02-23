@@ -78,3 +78,49 @@ def center_image(img: np.ndarray) -> np.ndarray:
     # Apply the translation
     centered_img = affine_transform(img, translation_matrix, offset=0, order=1, mode='constant', cval=0)
     return centered_img
+
+
+import scipy.ndimage
+
+
+def fourier_transform_features(image: np.ndarray) -> np.ndarray:
+    """
+    Computes the Fourier Transform features of a 28x28 image.
+
+    Parameters:
+        image (np.ndarray): A 2D (grayscale) or 3D (RGB) numpy array representing the image.
+
+    Returns:
+        np.ndarray: The magnitude spectrum of the Fourier Transform.
+    """
+    if image.shape[:2] != (28, 28):
+        print(image.shape[:2])
+        raise ValueError("Input image must be 28x28 pixels.")
+
+    if image.ndim == 3:
+        # Process each channel separately for RGB images
+        transformed_channels = [fourier_transform_features(image[..., i]) for i in range(image.shape[2])]
+        return np.stack(transformed_channels, axis=-1)
+
+    # Compute the 2D Fourier Transform
+    f_transform = np.fft.fft2(image)
+    f_transform_shifted = np.fft.fftshift(f_transform)
+
+    # Compute the magnitude spectrum
+    magnitude_spectrum = np.abs(f_transform_shifted)
+
+    return magnitude_spectrum
+
+
+def fourier_transform_features_arr(images: np.ndarray) -> np.ndarray:
+    """
+    Computes the Fourier Transform features for an array of 28x28 images.
+
+    Parameters:
+        images (np.ndarray): A 3D (grayscale) or 4D (RGB) numpy array representing multiple images.
+
+    Returns:
+        np.ndarray: An array of magnitude spectrums of the Fourier Transform.
+    """
+    output = [fourier_transform_features(p) for p in images]
+    return np.array(output)
