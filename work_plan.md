@@ -1,8 +1,8 @@
 # Image Processing Transformations and Distance Functions
 
 ## Training and Runtime Transformations:
-1. **Centering (Mean Removal)**
-2. **Principal Component Analysis (PCA)**
+1. **Centering (Mean Removal)** - it seems the images are centered
+2. **Principal Component Analysis (PCA)** - KNN: variance=.85, test_acc=97.52, BETTER
 3. **Deskew (Tilt Correction)** - Fix existing code
 4. **Fourier Transform Features** - worst with KNN (test ac = 93.28)
 
