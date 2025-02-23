@@ -71,6 +71,33 @@ def plot_images_with_tilt_angles(images, col_count=5, figsize=(10, 6), bold=Fals
     plot_grid(images, col_count, figsize=figsize, titles_list=[f'{angle}∠' for angle in angles], bold=bold)
 
 
-def plot_before_after_transform(image_list, transformation, col_count=4, figsize=(5,5)):
-    before_after_transform_list = [img for orig in image_list for img in (orig, transformation(orig))]
-    plot_grid(before_after_transform_list, col_count, figsize)
+def plot_before_after_transform(image_list, transformation, col_count=4, figsize=(5,5), **transform_kwargs):
+    """
+    Plots each image in image_list alongside its transformed version.
+
+    Parameters
+    ----------
+    image_list : list of np.ndarray
+        A list of images to be plotted before and after transformation.
+    transformation : callable
+        A function or callable object that takes an image (and additional kwargs)
+        and returns a transformed image.
+    col_count : int, optional
+        Number of columns for the plot grid. Defaults to 4.
+    figsize : tuple, optional
+        Tuple specifying the (width, height) in inches for the figure. Defaults to (5, 5).
+    **transform_kwargs : dict
+        Arbitrary keyword arguments to be passed to the transformation function.
+
+    Returns
+    -------
+    None
+        Displays a grid of subplots with each original image and its transformed counterpart.
+    """
+    # Build a list: [orig1, transformed(orig1), orig2, transformed(orig2), ...]
+    before_after_transform_list = [
+        img for orig in image_list
+        for img in (orig, transformation(orig, **transform_kwargs))
+    ]
+    # Assuming 'plot_grid' is a helper function that arranges images in a grid
+    plot_grid(before_after_transform_list, col_count=col_count, figsize=figsize)
