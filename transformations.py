@@ -203,3 +203,7 @@ def random_elastic_deformation(
     )
 
     return deformed_image
+
+
+def flatten_images(images):
+    return np.array([image.flatten() for image in images])
