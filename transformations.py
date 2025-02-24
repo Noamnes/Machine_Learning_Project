@@ -4,6 +4,7 @@ import scipy.ndimage
 import matplotlib.pyplot as plt
 from scipy.stats import moment
 
+
 def deskew_image(img: np.ndarray) -> np.ndarray:
     """
     Deskews a single 28x28 grayscale digit image using moment analysis.
@@ -38,23 +39,23 @@ def deskew_image(img: np.ndarray) -> np.ndarray:
 
     # Apply affine transformation
     deskewed_img = affine_transform(img, M, offset=0, order=1, mode='constant', cval=0)
-    
+
     return deskewed_img
 
 
 def compute_tilt_angle(image):
     # Normalize image to binary (thresholding)
     binary_img = (image > 128).astype(float)
-    
+
     # Compute centroid
     cy, cx = center_of_mass(binary_img)
 
     # Compute second-order central moments
     y, x = np.indices(image.shape)
-    mu20 = np.sum((x - cx)**2 * binary_img)
-    mu02 = np.sum((y - cy)**2 * binary_img)
+    mu20 = np.sum((x - cx) ** 2 * binary_img)
+    mu02 = np.sum((y - cy) ** 2 * binary_img)
     mu11 = np.sum((x - cx) * (y - cy) * binary_img)
-    
+
     # Compute orientation angle (in degrees)
     theta = 0.5 * np.arctan2(2 * mu11, mu20 - mu02) * (180 / np.pi)
     return abs(theta)  # Absolute value of tilt angle
@@ -72,12 +73,12 @@ def center_image(img: np.ndarray) -> np.ndarray:
     """
     # Compute the center of mass
     cy, cx = center_of_mass(img)
-    
+
     # Compute the translation needed to center the image
     translate_y = 14 - cy
     translate_x = 14 - cx
     translation_matrix = np.array([[1, 0, translate_x], [0, 1, translate_y]])
-    
+
     # Apply the translation
     centered_img = affine_transform(img, translation_matrix, offset=0, order=1, mode='constant', cval=0)
     return centered_img
@@ -127,10 +128,10 @@ def fourier_transform_features_arr(images: np.ndarray) -> np.ndarray:
 
 
 def random_elastic_deformation(
-    image: np.ndarray,
-    alpha: float = 34,
-    sigma: float = 4,
-    random_state: np.random.RandomState = None
+        image: np.ndarray,
+        alpha: float = 34,
+        sigma: float = 4,
+        random_state: np.random.RandomState = None
 ) -> np.ndarray:
     """
     Apply a random elastic deformation to a 2D image.
@@ -198,7 +199,7 @@ def random_elastic_deformation(
     deformed_image = map_coordinates(
         image,
         indices,
-        order=1,    # bilinear interpolation
+        order=1,  # bilinear interpolation
         mode='reflect'
     )
 
@@ -207,3 +208,75 @@ def random_elastic_deformation(
 
 def flatten_images(images):
     return np.array([image.flatten() for image in images])
+
+
+import numpy as np
+import cv2
+from scipy.special import jacobi
+import tensorflow as tf  # Using TensorFlow for MNIST, you could use PyTorch instead
+
+# Calculate radial polynomial for Zernike Moments
+from math import factorial  # Import factorial from math module
+
+
+def radial_poly(r, n, m):
+    if (n - abs(m)) % 2 != 0 or abs(m) > n:
+        return np.zeros_like(r)
+
+    radial = np.zeros_like(r)
+    for k in range((n - abs(m)) // 2 + 1):
+        coef = ((-1) ** k * factorial(n - k)) / (
+                factorial(k) *
+                factorial((n + abs(m)) // 2 - k) *
+                factorial((n - abs(m)) // 2 - k)
+        )
+        radial += coef * r ** (n - 2 * k)
+    return radial
+
+
+# Compute Zernike Moment for a single image
+def zernike_moment(img, n, m):
+    # Ensure image is 28x28 (MNIST size)
+    if img.shape != (28, 28):
+        img = cv2.resize(img, (28, 28))
+
+    # Create coordinate grid
+    x = np.arange(28) - 13.5  # Center at (13.5, 13.5)
+    y = np.arange(28) - 13.5
+    X, Y = np.meshgrid(x, y)
+
+    # Convert to polar coordinates
+    R = np.sqrt(X ** 2 + Y ** 2)
+    Theta = np.arctan2(Y, X)
+
+    # Normalize radius to [0,1]
+    R = R / 13.5  # 13.5 is half the image size
+
+    # Calculate Zernike polynomial
+    V = radial_poly(R, n, m) * np.exp(1j * m * Theta)
+
+    # Compute moment
+    moment = np.sum(img * np.conj(V)) * (n + 1) / np.pi
+
+    return moment
+
+
+# Preprocess MNIST images with Zernike Moments
+def preprocess_with_zernike(images, max_order=5):
+    n_samples = images.shape[0]
+    features = []
+
+    for i in range(n_samples):
+        img = images[i]
+        moments = []
+
+        # Calculate moments up to specified order
+        for n in range(max_order + 1):
+            for m in range(-n, n + 1, 2):  # m must satisfy (n-|m|) even
+                moment = zernike_moment(img, n, m)
+                # Store magnitude of complex moment
+                moments.append(np.abs(moment))
+
+        features.append(moments)
+
+    return np.array(features)

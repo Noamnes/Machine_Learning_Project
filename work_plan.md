@@ -9,7 +9,7 @@
 ## Training-Only Transformations:
 1. **Elastic Deformations?**
 2. **Morphological Operations** (Potentially complex)
-3. **Zernike Moments**
+3. **Zernike Moments** - very bad ( less than 0.6 on svm,knn,random-forest)
 
 ## Distance Functions:
 1. **Image Distortion Model (IDM)** - too heavy
