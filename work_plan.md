@@ -4,7 +4,7 @@
 1. **Centering (Mean Removal)** - it seems the images are centered
 2. **Principal Component Analysis (PCA)** - KNN: variance=.85, test_acc=97.52, BETTER
 3. **Deskew (Tilt Correction)** - Fix existing code
-4. **Fourier Transform Features** - worst with KNN (test ac = 93.28)
+4. **Fourier Transform Features** - worse with KNN (test ac = 93.28)
 
 ## Training-Only Transformations:
 1. **Elastic Deformations?**
@@ -12,9 +12,10 @@
 3. **Zernike Moments**
 
 ## Distance Functions:
-1. **Image Distortion Model (IDM)**
-2. **Earth Mover's Distance (EMD)**
-3. **L2 (Euclidean Distance)**
-4. **L1 (Manhattan Distance)**
-5. **Tangent Distance**
+1. **Image Distortion Model (IDM)** - too heavy
+2. **Earth Mover's Distance (EMD)** - too heavy
+3. **L2 (Euclidean Distance)** - I think that's the default of knn (so no dif from the basic model)
+4. **L1 (Manhattan Distance)** -  worse (test ac 96.33) 
+5. **Tangent Distance** - too heavy
 6. **Cosine Distance** - nice, with KNN (test ac 97.33)
+
