@@ -13,11 +13,23 @@ import tensorflow as tf
 from tensorflow import keras
 
 
-###############################################################################
-############################ Functions Definitions ############################
-###############################################################################
+def evaluate_model(model, X_train, X_test, y_train, y_test):
+    y_pred_test = model.predict(X_test)
+    y_pred_train = model.predict(X_train)
+    
+    errors = {
+                    "train_error": 1 - accuracy_score(y_train, y_pred_train),
+                    "test_error": 1 - accuracy_score(y_test, y_pred_test)
+                }
+    return errors
+    
+def fit_evaluate_models(models_list, X_train, X_test, y_train, y_test):
+    acc_dict = {}
+    for i, model in enumerate(models_list):
+        model.fit(X_train, y_train)
+        acc_dict[f'{model.__class__.__name__} - model {i+1}'] = evaluate_model(model, X_train, X_test, y_train, y_test)
+    return acc_dict
 
-# display matrix function
 def display_metrics_and_confusion_matrix(model_name, y_true, y_pred):
     """
     Displays accuracy, classification report (as a DataFrame), and a confusion matrix heatmap.
@@ -44,10 +56,6 @@ def display_metrics_and_confusion_matrix(model_name, y_true, y_pred):
     plt.title(f"Confusion Matrix - {model_name}")
     plt.show()
 
-###############################################################################
-# 1. DATA LOADING & PREPROCESSING
-###############################################################################
-# --- Load MNIST from Keras ---
 def load_preprocess_mnist_data(scale_features=True, flatten_image=True,  use_pca=False, pca_variance=0.95):
     """
     Loads and preprocesses the MNIST dataset with optional scaling, flattening, and PCA reduction.
@@ -90,9 +98,6 @@ def load_preprocess_mnist_data(scale_features=True, flatten_image=True,  use_pca
         
     return X_train, X_test, y_train, y_test
 
-###############################################################################
-# 2. BASELINE MODEL: SIMPLE NEURAL NETWORK
-###############################################################################
 def build_baseline_neural_network(input_dim, num_classes=10):
     """
     Builds a simple feed-forward neural network using Keras Sequential API.
@@ -145,9 +150,13 @@ def train_baseline_nn(X_train, y_train, X_test, y_test, epochs=5, batch_size=128
     display_metrics_and_confusion_matrix("Baseline NN", y_test, y_pred)
     return model
 
-###############################################################################
-# 3. CLASSICAL MACHINE LEARNING MODELS
-###############################################################################
+# return options:
+    # 1. train|test accuracy
+    # 2. train&test accuracy
+    # 3. confusion_matrix
+    # 4. precision, recall, f1-score
+
+# display options: all the return options and more.
 
 # 3.1 KNN
 def train_knn(X_train, y_train, X_test, y_test, k=3):
