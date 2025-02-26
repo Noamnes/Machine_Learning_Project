@@ -22,5 +22,6 @@
 need to add:
 - description for every transformation - done
 - description for every distance function - done
+- add all transformation to the notebook - left: Morphological, Deskew
 - summery of accuracy
 - a description and conclusion file
