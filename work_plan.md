@@ -17,5 +17,10 @@
 3. **L2 (Euclidean Distance)** - I think that's the default of knn (so no dif from the basic model)
 4. **L1 (Manhattan Distance)** -  worse (test ac 96.33) 
 5. **Tangent Distance** - too heavy
-6. **Cosine Distance** - nice, with KNN (test ac 97.33)
+6. **Cosine Distance** - A little better (test ac 97.33)
 
+need to add:
+- description for every transformation
+- description for every distance function
+- summery of accuracy
+- a description and conclusion file
