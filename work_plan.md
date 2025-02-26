@@ -20,7 +20,7 @@
 6. **Cosine Distance** - A little better (test ac 97.33)
 
 need to add:
-- description for every transformation
-- description for every distance function
+- description for every transformation - done
+- description for every distance function - done
 - summery of accuracy
 - a description and conclusion file
