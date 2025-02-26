@@ -170,7 +170,7 @@ def train_knn(X_train, y_train, X_test, y_test, k=3):
     knn.fit(X_train, y_train)
     y_pred = knn.predict(X_test)
     display_metrics_and_confusion_matrix("KNN", y_test, y_pred)
-    return knn
+    return knn , accuracy_score(y_test, y_pred)
 
 
 # 3.2 SVM
@@ -185,7 +185,7 @@ def train_svm(X_train, y_train, X_test, y_test, kernel='rbf'):
     svm.fit(X_train, y_train)
     y_pred = svm.predict(X_test)
     display_metrics_and_confusion_matrix("SVM", y_test, y_pred)
-    return svm
+    return svm , accuracy_score(y_test, y_pred)
 
 
 # 3.3 Decision Tree
@@ -200,7 +200,7 @@ def train_decision_tree(X_train, y_train, X_test, y_test, max_depth=None):
     dt.fit(X_train, y_train)
     y_pred = dt.predict(X_test)
     display_metrics_and_confusion_matrix("Decision Tree", y_test, y_pred)
-    return dt
+    return dt, accuracy_score(y_test, y_pred)
 
 # 3.4 AdaBoost
 def train_adaboost(X_train, y_train, X_test, y_test, n_estimators=50):
@@ -214,7 +214,7 @@ def train_adaboost(X_train, y_train, X_test, y_test, n_estimators=50):
     ada.fit(X_train, y_train)
     y_pred = ada.predict(X_test)
     display_metrics_and_confusion_matrix("AdaBoost", y_test, y_pred)
-    return ada
+    return ada, accuracy_score(y_test, y_pred)
 
 
 # 3.5 Random Forest
@@ -229,7 +229,7 @@ def train_random_forest(X_train, y_train, X_test, y_test, n_estimators=100):
     rf.fit(X_train, y_train)
     y_pred = rf.predict(X_test)
     display_metrics_and_confusion_matrix("Random Forest", y_test, y_pred)
-    return rf
+    return rf, accuracy_score(y_test, y_pred)
 
 ###############################################################################
 # 4. OPTIONAL ENSEMBLE
@@ -244,7 +244,7 @@ def train_ensemble(models, X_test, y_test):
     predictions = np.concatenate(predictions, axis=1)
     final_preds = [np.bincount(row).argmax() for row in predictions]
     display_metrics_and_confusion_matrix("Ensemble Majority Voting", y_test, final_preds)
-    return np.array(final_preds)
+    return np.array(final_preds) , accuracy_score(y_test, final_preds)
 
 
 ###############################################################################
